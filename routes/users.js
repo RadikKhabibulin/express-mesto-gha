@@ -6,9 +6,9 @@ const {
 const usersRouter = router;
 
 usersRouter.get('/', getUsers);
+usersRouter.post('/', createUser);
 usersRouter.patch('/me', updateUser);
 usersRouter.patch('/me/avatar', updateUser);
 usersRouter.get('/:userId', getUser);
-usersRouter.post('/', createUser);
 
 module.exports = usersRouter;

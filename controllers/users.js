@@ -3,14 +3,14 @@ const NotFoundError = require('../errors/notFoundError');
 const HttpError = require('../errors/httpError');
 
 const BadRequestCode = 400;
-const ServerError = 500;
+const ServerErrorCode = 500;
 
 module.exports.getUsers = (req, res) => {
   User.find()
     .then((users) => {
       res.send({ data: users });
     })
-    .catch((err) => res.status(ServerError).send({ message: err.message }));
+    .catch((err) => res.status(ServerErrorCode).send({ message: err.message }));
 };
 
 module.exports.getUser = (req, res) => {
@@ -30,7 +30,7 @@ module.exports.getUser = (req, res) => {
         res.status(err.statusCode).send({ message: err.message });
         return;
       }
-      res.status(ServerError).send({ message: err.message });
+      res.status(ServerErrorCode).send({ message: err.message });
     });
 };
 
@@ -59,7 +59,7 @@ module.exports.updateUser = (req, res) => {
         res.status(err.statusCode).send({ message: err.message });
         return;
       }
-      res.status(ServerError).send({ message: err.message });
+      res.status(ServerErrorCode).send({ message: err.message });
     });
 };
 
@@ -75,6 +75,6 @@ module.exports.createUser = (req, res) => {
         res.status(BadRequestCode).send({ message: err.message });
         return;
       }
-      res.status(ServerError).send({ message: err.message });
+      res.status(ServerErrorCode).send({ message: err.message });
     });
 };
