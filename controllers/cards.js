@@ -1,19 +1,17 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/notFoundError');
-const HttpError = require('../errors/httpError');
+const BadRequestError = require('../errors/badRequestError');
+const ForbiddenError = require('../errors/forbiddenError');
 
-const BadRequestCode = 400;
-const ServerErrorCode = 500;
-
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find()
     .then((cards) => {
       res.send({ data: cards });
     })
-    .catch((err) => res.status(ServerErrorCode).send({ message: err.message }));
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
@@ -22,36 +20,40 @@ module.exports.createCard = (req, res) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        res.status(BadRequestCode).send({ message: err.message });
+      if (err.name === 'CastError') {
+        next(new BadRequestError(err.message));
         return;
       }
-      res.status(ServerErrorCode).send({ message: err.message });
+
+      next(err);
     });
 };
 
-module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+module.exports.deleteCard = (req, res, next) => {
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError(`Card with _id=${req.params.cardId} not found`);
       }
+
+      if (!card.owner.equals(req.user._id)) {
+        throw new ForbiddenError('Permission denied');
+      }
+
+      card.remove();
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BadRequestCode).send({ message: err.message });
+        next(new BadRequestError(err.message));
         return;
       }
-      if (err instanceof HttpError) {
-        res.status(err.statusCode).send({ message: err.message });
-        return;
-      }
-      res.status(ServerErrorCode).send({ message: err.message });
+
+      next(err);
     });
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -61,22 +63,20 @@ module.exports.likeCard = (req, res) => {
       if (!card) {
         throw new NotFoundError(`Card with _id=${req.params.cardId} not found`);
       }
+
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BadRequestCode).send({ message: err.message });
+        next(new BadRequestError(err.message));
         return;
       }
-      if (err instanceof HttpError) {
-        res.status(err.statusCode).send({ message: err.message });
-        return;
-      }
-      res.status(ServerErrorCode).send({ message: err.message });
+
+      next(err);
     });
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -86,17 +86,15 @@ module.exports.dislikeCard = (req, res) => {
       if (!card) {
         throw new NotFoundError(`Card with _id=${req.params.cardId} not found`);
       }
+
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BadRequestCode).send({ message: err.message });
+        next(new BadRequestError(err.message));
         return;
       }
-      if (err instanceof HttpError) {
-        res.status(err.statusCode).send({ message: err.message });
-        return;
-      }
-      res.status(ServerErrorCode).send({ message: err.message });
+
+      next(err);
     });
 };
