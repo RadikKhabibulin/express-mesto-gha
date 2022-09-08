@@ -8,6 +8,7 @@ const cardsRouter = require('./routes/cards');
 const pageNotFoundRouter = require('./routes/pageNotFound');
 const linkRegex = require('./validators/linkValidator');
 const auth = require('./middlewares/auth');
+const { errorHandler } = require('./middlewares/errorHandler');
 const { createUser, login } = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
@@ -41,14 +42,7 @@ app.use('/users', auth, usersRouter);
 app.use('/cards', auth, cardsRouter);
 
 app.use(errors());
-app.use((err, req, res, _next) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send({
-    message: statusCode === 500
-      ? 'Server error'
-      : message,
-  });
-});
+app.use(errorHandler);
 app.use('/', pageNotFoundRouter);
 
 app.listen(PORT);
