@@ -22,7 +22,7 @@ module.exports.login = (req, res, next) => {
 
       res
         .cookie('jwt', token, { maxAge: 60 * 60 * 24, httpOnly: true })
-        .end();
+        .send({ token });
     })
     .catch(next);
 };
