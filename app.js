@@ -40,9 +40,8 @@ app.use('/users', auth, usersRouter);
 app.use('/cards', auth, cardsRouter);
 
 app.use(errors());
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   const { statusCode = 500, message } = err;
-  console.log(err);
   res.status(statusCode).send({
     message: statusCode === 500
       ? 'Server error'
