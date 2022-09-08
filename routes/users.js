@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const linkRegex = require('../validators/linkValidator');
 const {
   getUser, getUserById, getUsers, updateUser,
 } = require('../controllers/users');
@@ -18,13 +19,13 @@ usersRouter.patch('/me', celebrate({
 
 usersRouter.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string(),
+    avatar: Joi.string().required().pattern(new RegExp(linkRegex)),
   }),
 }), updateUser);
 
 usersRouter.get('/:userId', celebrate({
   params: Joi.object().keys({
-    cardId: Joi
+    userId: Joi
       .string()
       .required()
       .hex()
