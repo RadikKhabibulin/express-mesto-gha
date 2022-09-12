@@ -125,6 +125,10 @@ module.exports.createUser = (req, res, next) => {
         next(new AlreadyExistsError(`User with email=${email} already exist`));
         return;
       }
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError(err.message));
+        return;
+      }
 
       next(err);
     });
