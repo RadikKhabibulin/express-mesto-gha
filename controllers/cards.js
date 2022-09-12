@@ -40,7 +40,9 @@ module.exports.deleteCard = (req, res, next) => {
         throw new ForbiddenError('Permission denied');
       }
 
-      card.remove();
+      return card.remove();
+    })
+    .then((card) => {
       res.send({ data: card });
     })
     .catch((err) => {

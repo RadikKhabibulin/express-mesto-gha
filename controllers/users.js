@@ -20,8 +20,9 @@ module.exports.login = (req, res, next) => {
         { expiresIn: '7d' },
       );
 
+      const tokenMaxAge = 1000 * 60 * 60 * 24;
       res
-        .cookie('jwt', token, { maxAge: 60 * 60 * 24, httpOnly: true })
+        .cookie('jwt', token, { maxAge: tokenMaxAge, httpOnly: true })
         .send({ token });
     })
     .catch(next);

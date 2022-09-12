@@ -1,5 +1,5 @@
-const NotFoundCode = 404;
+const NotFoundError = require('../errors/notFoundError');
 
-module.exports = (req, res) => {
-  res.status(NotFoundCode).send({ message: 'Page not found' });
+module.exports = (req, res, next) => {
+  next(new NotFoundError('Page not found'));
 };

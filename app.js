@@ -40,9 +40,9 @@ app.post('/signup', celebrate({
 
 app.use('/users', auth, usersRouter);
 app.use('/cards', auth, cardsRouter);
+app.use('/', pageNotFoundRouter);
 
 app.use(errors());
 app.use(errorHandler);
-app.use('/', pageNotFoundRouter);
 
 app.listen(PORT);
