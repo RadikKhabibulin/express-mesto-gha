@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
@@ -19,6 +20,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/signin', celebrate({
