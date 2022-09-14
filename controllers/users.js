@@ -22,8 +22,8 @@ module.exports.login = (req, res, next) => {
 
       const tokenMaxAge = 1000 * 60 * 60 * 24;
       res
-        .cookie('jwt', token, { maxAge: tokenMaxAge, httpOnly: true })
-        .send({ token });
+        .cookie('jwt', token, { maxAge: tokenMaxAge })
+        .send({ message: 'Successful authentication' });
     })
     .catch(next);
 };
