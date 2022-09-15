@@ -12,7 +12,7 @@ const linkRegex = require('./validators/linkValidator');
 const auth = require('./middlewares/auth');
 const corsHandler = require('./middlewares/corsHandler');
 const { errorHandler } = require('./middlewares/errorHandler');
-const { createUser, login } = require('./controllers/users');
+const { createUser, login, logout } = require('./controllers/users');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3001 } = process.env;
@@ -23,8 +23,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 const app = express();
 
-app.use(cookieParser());
 app.use(corsHandler);
+app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use(requestLogger);
@@ -41,7 +41,7 @@ app.post('/signin', celebrate({
     password: Joi.string().required().min(8),
   }),
 }), login);
-
+app.get('/signout', logout);
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),

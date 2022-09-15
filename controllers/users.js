@@ -8,6 +8,7 @@ const UnauthorizedError = require('../errors/unauthorizedError');
 const BadRequestError = require('../errors/badRequestError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
+const jwtCookieName = 'jwt';
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -22,10 +23,14 @@ module.exports.login = (req, res, next) => {
 
       const tokenMaxAge = 1000 * 60 * 60 * 24;
       res
-        .cookie('jwt', token, { maxAge: tokenMaxAge })
+        .cookie(jwtCookieName, token, { maxAge: tokenMaxAge })
         .send({ message: 'Successful authentication' });
     })
     .catch(next);
+};
+
+module.exports.logout = (req, res, _next) => {
+  res.clearCookie(jwtCookieName).send({ message: 'Successful logout' });
 };
 
 module.exports.getUsers = (req, res, next) => {
