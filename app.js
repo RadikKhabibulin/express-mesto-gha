@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
@@ -12,6 +13,7 @@ const auth = require('./middlewares/auth');
 const corsHandler = require('./middlewares/corsHandler');
 const { errorHandler } = require('./middlewares/errorHandler');
 const { createUser, login } = require('./controllers/users');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3001 } = process.env;
 
@@ -24,6 +26,8 @@ const app = express();
 app.use(cookieParser());
 app.use(corsHandler);
 app.use(bodyParser.json());
+
+app.use(requestLogger);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -52,6 +56,7 @@ app.use('/users', auth, usersRouter);
 app.use('/cards', auth, cardsRouter);
 app.use('/', pageNotFoundRouter);
 
+app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
 

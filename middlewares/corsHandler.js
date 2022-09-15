@@ -5,12 +5,12 @@ const allowedCors = [
   'http://127.0.0.1:3000',
 ];
 
-const DEFAULT_ALLOWED_METHODS = ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'];
+const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 
 const cors = (req, res, next) => {
   const { method } = req;
   const { origin } = req.headers;
-  const reqHeaders = req.headers['access-control-request-headers'];
+  const requestHeaders = req.headers['access-control-request-headers'];
 
   res.header('Access-Control-Allow-Credentials', true);
 
@@ -20,7 +20,7 @@ const cors = (req, res, next) => {
 
   if (method === 'OPTIONS') {
     res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
-    res.header('Access-Control-Allow-Headers', reqHeaders);
+    res.header('Access-Control-Allow-Headers', requestHeaders);
     return res.end();
   }
 

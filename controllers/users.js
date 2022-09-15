@@ -7,7 +7,7 @@ const AlreadyExistsError = require('../errors/alreadyExistsError');
 const UnauthorizedError = require('../errors/unauthorizedError');
 const BadRequestError = require('../errors/badRequestError');
 
-const { JWT_SECRET_KEY = 'debug-secret-key' } = process.env;
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -16,7 +16,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        JWT_SECRET_KEY,
+        NODE_ENV === 'production' ? JWT_SECRET : 'debug-secret-key',
         { expiresIn: '7d' },
       );
 
